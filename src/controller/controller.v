@@ -20,8 +20,8 @@ module controller #(
 
     // 控制信号
     wire [6:0] w_Opcode = `_INST_OPCODE_(i_Instrunction);
-    wire [2:0] w_Func3 = `_INST_FUNC3_(i_Instrunction);
-    wire [6:0] w_Func7 = `_INST_FUNC7_(i_Instrunction);
+    wire [2:0] w_Func3 = `_INST_FUNCT3_(i_Instrunction);
+    wire [6:0] w_Func7 = `_INST_FUNCT7_(i_Instrunction);
 
     assign o_Branch = (w_Opcode == `_OPCODE_B_TYPE_)? (w_Func3 == `_FUNCT3_BEQ_) : 0;
 
@@ -33,7 +33,9 @@ module controller #(
                        (w_Opcode == `_OPCODE_B_TYPE_)? `_ALU_SRCB_REG2_ :
                        (w_Opcode == `_OPCODE_J_TYPE_)? `_ALU_SRCB_FOUR_ : `_ALU_SRCB_IMM_;
 
-    assign o_AluCtr = (w_Opcode == `_OPCODE_R_TYPE_)? ((w_Func7 == `_FUNCT7_LOGIC_) ? {1'b0, w_Func3} : ((w_Func7 == _FUNCT7_SUB_) ? `_ALU_SUB_ : `_ALU_ADD_)) :
+
+
+    assign o_AluCtr = (w_Opcode == `_OPCODE_R_TYPE_)? ((w_Func7 == `_FUNCT7_LOGIC_) ? {1'b0, w_Func3} : ((w_Func7 == `_FUNCT7_SUB_) ? `_ALU_SUB_ : `_ALU_ADD_)) :
                       (w_Opcode == `_OPCODE_I_TYPE_ || w_Opcode == `_OPCODE_LW_ || w_Opcode == `_OPCODE_SW_)? `_ALU_ADD_ :
                       (w_Opcode == `_OPCODE_B_TYPE_)? ((w_Func3 == `_FUNCT3_BEQ_) ? `_ALU_SUB_ : `_ALU_SLT_) :
                       (w_Opcode == `_OPCODE_J_TYPE_)? `_ALU_ADD_ : 
@@ -42,7 +44,7 @@ module controller #(
 
     assign o_MemToReg = (w_Opcode == `_OPCODE_LW_)? 1 : 0;
 
-    assign o_RegWrEn = (w_Opcode == `_OPCODE_SW_ || w_Opcode == `_OPCODE_BEQ_) ? 0 : 1;
+    assign o_RegWrEn = (w_Opcode == `_OPCODE_SW_ || w_Opcode == `_OPCODE_B_TYPE_) ? 0 : 1;
 
     assign o_MemWrEn = (w_Opcode == `_OPCODE_SW_)? 1 : 0;
 

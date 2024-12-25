@@ -1,4 +1,4 @@
-`include "light_rv32i_instr_def.h"
+`include "light_rv32i_defs.vh"
 
 module imm_extend #(
     parameter INST_WIDTH = `_INST_WIDTH_
@@ -20,11 +20,11 @@ module imm_extend #(
     // assign w_immU = {Instr[31:12], 12{1'b0}}; // U-type
     // assign w_immJ = {12{Instr[31]}, Instr[19:12], Instr[20], Instr[30:21], 1'b0}; // J-type
 
-    assign w_immI = _INST_IMM_I_(i_Instr);
-    assign w_immS = _INST_IMM_S_(i_Instr);
-    assign w_immB = _INST_IMM_B_(i_Instr);
-    assign w_immU = _INST_IMM_U_(i_Instr);
-    assign w_immJ = _INST_IMM_J_(i_Instr);
+    assign w_immI = `_INST_IMM_I_(i_Instr);
+    assign w_immS = `_INST_IMM_S_(i_Instr);
+    assign w_immB = `_INST_IMM_B_(i_Instr);
+    assign w_immU = `_INST_IMM_U_(i_Instr);
+    assign w_immJ = `_INST_IMM_J_(i_Instr);
 
     assign o_OutImm = (i_ExtOp == 3'b000) ? w_immI :
                     (i_ExtOp == 3'b010) ? w_immS :

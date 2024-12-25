@@ -1,9 +1,9 @@
 `include "light_rv32i_defs.vh"
 
 module reg_file #(
-    parameter ADDR_WIDTH = _REG_ADDR_WIDTH_ ,
-    parameter DATA_WIDTH = _REG_DATA_WIDTH_ ,
-    parameter REG_NUMBER = _REG_NUMBER_
+    parameter ADDR_WIDTH = `_REG_ADDR_WIDTH_ ,
+    parameter DATA_WIDTH = `_REG_DATA_WIDTH_ ,
+    parameter REG_NUMBER = `_REG_NUMBER_
 ) (
     input                       clk         ,
     input                       reset       ,

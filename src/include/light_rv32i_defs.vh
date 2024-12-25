@@ -60,11 +60,11 @@
 `define _INST_FUNCT7_(x)   x[`_FUNCT7_MSB_:`_FUNCT7_LSB_]
 //------------------------------------------------------
 // 1.2) 定义一些常用的宏，用于提取立即数字段
-`define _INST_IMM_I_(x)    {20{x[`_FUNCT7_MSB_]}, x[`_Funct7_MSB_:`_RS2_LSB_]}
-`define _INST_IMM_S_(x)    {20{x[`_FUNCT7_MSB_]}, x[`_Funct7_MSB_:`_Funct7_LSB_], x[`_RD_MSB_:`_RD_LSB_]}
-`define _INST_IMM_B_(x)    {20{x[`_FUNCT7_MSB_]}, x[`_RD_LSB_], x[`_Funct7_MSB_-1:`_Funct7_LSB_], x[`_RD_MSB_:`_RD_LSB_], 1'b0}
-`define _INST_IMM_U_(x)    {{x[`_FUNCT7_MSB_, `_Funct3_LSB_]}, 12'b0}
-`define _INST_IMM_J_(x)    {12{x[`_FUNCT7_MSB_]}, x[19:12], x[20], x[30:21], 1'b0}
+`define _INST_IMM_I_(x)    {{20{x[`_FUNCT7_MSB_]}}, x[`_FUNCT7_MSB_:`_RS2_LSB_]}
+`define _INST_IMM_S_(x)    {{20{x[`_FUNCT7_MSB_]}}, x[`_FUNCT7_MSB_:`_FUNCT7_LSB_], x[`_RD_MSB_:`_RD_LSB_]}
+`define _INST_IMM_B_(x)    {{20{x[`_FUNCT7_MSB_]}}, x[`_RD_LSB_], x[`_FUNCT7_MSB_-1:`_FUNCT7_LSB_], x[`_RD_MSB_:`_RD_LSB_], 1'b0}
+`define _INST_IMM_U_(x)    {x[`_FUNCT7_MSB_: `_FUNCT3_LSB_], 12'b0}
+`define _INST_IMM_J_(x)    {{12{x[`_FUNCT7_MSB_]}}, x[19:12], x[20], x[30:21], 1'b0}
 
 
 //------------------------------------------------------
@@ -108,10 +108,10 @@
 // ALU 操作码定义
 `define _ALU_ADD_  4'b0000
 `define _ALU_SUB_  4'b1000
-`define _ALU_AND_  {1'b0, `_FUNC3_AND_}
-`define _ALU_OR_   {1'b0, `_FUNC3_OR_}
-`define _ALU_XOR_  {1'b0, `_FUNC3_XOR_}
-`define _ALU_SLT_  {1'b0, `_FUNC3_SLT_}
+`define _ALU_AND_  {1'b0, `_FUNCT3_AND_}
+`define _ALU_OR_   {1'b0, `_FUNCT3_OR_}
+`define _ALU_XOR_  {1'b0, `_FUNCT3_XOR_}
+`define _ALU_SLT_  {1'b0, `_FUNCT3_SLT_}
 
 `define _ALU_SRCB_ 4'b1111
 
