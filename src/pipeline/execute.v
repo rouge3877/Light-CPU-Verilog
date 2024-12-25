@@ -46,7 +46,7 @@ module execute(
 );
 
     // Instantiate alu
-    wire [31:0] w_AluInA, w_AluInB, w_Result;
+    wire [31:0] w_AluInA, w_AluInB, w_AluResult;
     wire [3:0] w_AluCtr;
     wire w_AluCf;
 
@@ -54,7 +54,7 @@ module execute(
         .i_a      (w_AluInA),
         .i_b      (w_AluInB),
         .i_AluCtr (w_AluCtr),
-        .o_Result (w_Result),
+        .o_Result (w_AluResult),
         .o_cf     (),
         .o_zf     (w_AluZf),
         .o_of     (),
@@ -103,9 +103,9 @@ module execute(
             o_pipe_Branch <= 0;
             o_pipe_Jump <= 0;
         end else begin
-            o_pipe_AluResult <= i_pipe_AluResult;
-            o_pipe_Zero <= i_pipe_Zero;
-            o_pipe_TargetAddr <= i_pipe_TargetAddr;
+            o_pipe_AluResult <= w_AluResult;
+            o_pipe_Zero <= w_AluZf;
+            o_pipe_TargetAddr <= w_AdderResult;
 
             o_pipe_Reg2Data <= i_pipe_Reg2Data;
             o_pipe_RegDst <= i_pipe_RegDst;
