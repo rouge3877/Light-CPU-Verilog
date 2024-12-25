@@ -29,9 +29,9 @@ module controller #(
 
     assign o_Alu1Src = (w_Opcode == `_OPCODE_J_TYPE_)? 1 : 0;
 
-    assign o_Alu2Src = (w_Opcode == `_OPCODE_R_TYPE_)? 0 :
-                       (w_Opcode == `_OPCODE_B_TYPE_)? 0 :
-                       (w_Opcode == `_OPCODE_J_TYPE_)? 2 : 1;
+    assign o_Alu2Src = (w_Opcode == `_OPCODE_R_TYPE_)? `_ALU_SRCB_REG2_ :
+                       (w_Opcode == `_OPCODE_B_TYPE_)? `_ALU_SRCB_REG2_ :
+                       (w_Opcode == `_OPCODE_J_TYPE_)? `_ALU_SRCB_FOUR_ : `_ALU_SRCB_IMM_;
 
     assign o_AluCtr = (w_Opcode == `_OPCODE_R_TYPE_)? ((w_Func7 == `_FUNCT7_LOGIC_) ? {1'b0, w_Func3} : ((w_Func7 == _FUNCT7_SUB_) ? `_ALU_SUB_ : `_ALU_ADD_)) :
                       (w_Opcode == `_OPCODE_I_TYPE_ || w_Opcode == `_OPCODE_LW_ || w_Opcode == `_OPCODE_SW_)? `_ALU_ADD_ :
