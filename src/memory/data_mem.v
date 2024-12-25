@@ -24,7 +24,7 @@ module data_mem #(
         if (!$readmemh(MEM_INIT_FILE, r_mem)) begin
             $display("Error: Failed to initialize data memory from file %s", MEM_INIT_FILE);
         end else begin
-            for (int i = 0; i < DATA_MEM_SIZE; i = i + 1) begin
+            for (i = 0; i < DATA_MEM_SIZE; i = i + 1) begin
                 r_mem[i] = {DATA_WIDTH{1'b0}};
             end
         end
@@ -41,8 +41,16 @@ module data_mem #(
             for (i = 0; i < DATA_MEM_SIZE; i = i + 1) begin
                 r_mem[i] <= {DATA_WIDTH{1'b0}};
             end
+            // 重置时重新初始化文件
+            if (!$readmemh(MEM_INIT_FILE, r_mem)) begin
+                $display("Error: Failed to initialize data memory from file %s", MEM_INIT_FILE);
+            end
         end else if (i_WrEn) begin
             r_mem[i_Addr] <= i_DataIn;
+            // 写入文件
+            if (!$writememh(MEM_INIT_FILE, r_mem)) begin
+                $display("Error: Failed to write data memory to file %s", MEM_INIT_FILE);
+            end
         end
     end
 
