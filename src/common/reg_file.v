@@ -38,9 +38,9 @@ module reg_file #(
             : reg_array[i_Reg2Addr]);
 
     // Write port
+    integer i;
     always @(posedge clk or posedge reset) begin
         if (reset) begin
-            integer i;
             for (i = 0; i < REG_NUMBER; i = i + 1) begin
                 reg_array[i] <= 0;
             end

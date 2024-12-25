@@ -114,8 +114,8 @@ always @(posedge clk or posedge reset) begin
     end else if (!i_pipe_stall) begin
         o_pipe_PC       <= i_pipe_PC;
         o_pipe_Imm      <= w_imm;
-        o_pipe_Reg1Data <= w_reg1Data;
-        o_pipe_Reg2Data <= w_reg2Data;
+        o_pipe_Reg1Data <= w_Reg1Data;
+        o_pipe_Reg2Data <= w_Reg2Data;
         o_pipe_RegDst   <= w_RegDst;
 
         o_pipe_Alu1Src  <= w_Alu1Src;
