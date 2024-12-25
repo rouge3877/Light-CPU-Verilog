@@ -1,27 +1,31 @@
 `include "light_rv32i_defs.vh"
 
-
 module decode(
     input clk,
     input reset,
 
     input i_pipe_stall,
+
+    input wire i_RegWrEn,   // 假设用于指示写回使能
+    input wire [4:0] i_RegDst, // 用于写回目的寄存器
+    input wire [31:0] i_RegWrData, // 用于写回数据
     
+
+    // --- pipeline ---
+    // former result
     input wire [31:0] i_pipe_PC,
     input wire [31:0] i_pipe_Instruction,
 
-    // 结合寄存器文件与立即数扩展
-    input wire i_ctr_ExtOp,   // 假设用于指示扩展类型
-    input wire i_ctr_RegWr,   // 假设用于指示写回使能
-
-    input wire [31:0] i_RegWrData, // 用于写回数据
-
-    output reg [31:0] o_pipe_PC,
+    // this result
     output reg [31:0] o_pipe_Imm,
     output reg [31:0] o_pipe_Reg1Data,
     output reg [31:0] o_pipe_Reg2Data,
-    output reg [4:0]  o_pipe_RegDst,
 
+    // pass through
+    output reg [4:0]  o_pipe_RegDst,
+    output reg [31:0] o_pipe_PC,
+
+    // control signals
     output reg       o_pipe_Alu1Src,
     output reg [1:0] o_pipe_Alu2Src,
     output reg [3:0] o_pipe_AluCtr,
@@ -32,14 +36,6 @@ module decode(
     output reg       o_pipe_Jump
 
 );
-
-wire [4:0] w_Reg1, w_Reg2, w_RegDst;
-
-// 提取指令字段
-assign w_Reg1 = `_INST_RS1_(i_pipe_Instruction);
-assign w_Reg2 = `_INST_RS2_(i_pipe_Instruction);
-assign w_RegDst  = `_INST_RD_(i_pipe_Instruction);
-
 
 // Instantiate controller
 wire [2:0] w_ExtOp;
@@ -69,6 +65,13 @@ controller  u_controller (
 // Instantiate register file
 
 wire [31:0] w_Reg1Data, w_Reg2Data;
+wire [4:0] w_Reg1, w_Reg2, w_RegDst;
+
+// 提取指令字段
+assign w_Reg1 = `_INST_RS1_(i_pipe_Instruction);
+assign w_Reg2 = `_INST_RS2_(i_pipe_Instruction);
+// assign w_RegDst  = `_INST_RD_(i_pipe_Instruction);
+assign w_RegDst = i_RegDst;
 
 reg_file u_reg_file (
     .clk        (clk),
@@ -81,7 +84,7 @@ reg_file u_reg_file (
     // 假设此处暂不处理写回数据，就给默认值
     .i_RegWrAddr (w_RegDst),
     .i_RegWrData (i_RegWrData),
-    .i_RegWrEn   (i_ctr_RegWr)
+    .i_RegWrEn   (i_RegWrEn)
 );
 
 // Instantiate immediate extend
