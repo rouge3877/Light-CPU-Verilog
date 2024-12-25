@@ -17,22 +17,16 @@ module inst_mem #(
     
     integer i;
 
+    // 初始化指令存储器（仅在仿真中有效）
     initial begin
-        // 初始化指令存储器
-        if (!$readmemh(MEM_INIT_FILE, mem)) begin
-            $display("Error: Failed to initialize instruction memory from file %s", MEM_INIT_FILE);
-        end else begin
-            for (i = 0; i < INST_MEM_SIZE; i = i + 1) begin
-                mem[i] = {INST_WIDTH{1'b0}};
-            end
-        end
+        $readmemh(MEM_INIT_FILE, mem);
+        $display("Instruction memory initialized from file: %s", MEM_INIT_FILE);
     end
 
+    // 读逻辑和写逻辑
     always @(posedge clk or posedge reset) begin
         if (reset) begin
-            for (i = 0; i < INST_MEM_SIZE; i = i + 1) begin
-                mem[i] <= {INST_WIDTH{1'b0}};
-            end
+            $readmemh(MEM_INIT_FILE, mem);    
         end else begin
             o_Data <= mem[i_Addr];
         end
