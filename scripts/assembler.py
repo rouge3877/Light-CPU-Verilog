@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-
+#!/usr/bin/python3
 import sys
 
 # 根据 specification 中给出的指令(opcode, funct3, funct7)
@@ -110,12 +109,12 @@ def compile_line(line):
         offset = int(parts[3])
         r_rs1 = reg_num(rs1)
         r_rs2 = reg_num(rs2)
-        imm_12 = (offset >> 12) & 0x1
+        imm_12_val = (offset >> 12) & 0x1
         imm_10_5 = (offset >> 5) & 0x3F
         imm_4_1 = (offset >> 1) & 0xF
         imm_11 = (offset >> 11) & 0x1
         machine = (
-            f"{imm_12:01b}"
+            f"{imm_12_val:01b}"
             f"{imm_10_5:06b}"
             f"{r_rs2:05b}"
             f"{r_rs1:05b}"
