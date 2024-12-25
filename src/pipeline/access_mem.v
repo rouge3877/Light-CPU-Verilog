@@ -29,7 +29,6 @@ module access_mem(
     // pass through
     output reg [31:0] o_pipe_AluResult,
     output reg [4:0]  o_pipe_RegDst,
-    output reg [31:0] o_pipe_Reg2Data,
 
     // control signals
     output reg       o_pipe_MemToReg,
@@ -60,7 +59,6 @@ module access_mem(
 
             o_pipe_AluResult <= 0;
             o_pipe_RegDst <= 0;
-            o_pipe_Reg2Data <= 0;
             o_pipe_MemToReg <= 0;
             o_pipe_RegWrEn <= 0;
         end else begin
@@ -68,7 +66,6 @@ module access_mem(
 
             o_pipe_AluResult <= i_pipe_AluResult;
             o_pipe_RegDst <= i_pipe_RegDst;
-            o_pipe_Reg2Data <= i_pipe_Reg2Data;
             o_pipe_MemToReg <= i_pipe_MemToReg;
             o_pipe_RegWrEn <= i_pipe_RegWrEn;
         end
