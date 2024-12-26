@@ -25,13 +25,27 @@ module simple_cpu_tb();
 
     // finish after 200 cycles
     initial begin
-        #200 $finish;
+        #100 $finish;
     end
 
 
     initial begin
         $dumpfile("simple_cpu_tb.vcd");
         $dumpvars(0, simple_cpu_tb);
+    end
+
+    // print reg file each cycle
+    integer i;
+    always @(posedge clk) begin
+        $display("------------------------Cycle %0d------------------------", $time);
+        
+        $display("PC = %0d", uut.u_fetch.o_pipe_PC);
+        $display("Instruction = %0h", uut.u_fetch.o_pipe_Instruction);
+        for(i = 0; i < 5; i = i + 1) begin
+            $display("reg[%0d] = %0d", i, uut.u_decode.u_reg_file.reg_array[i]);
+        end
+
+        $display("--------------------------------------------------------");
     end
 
 endmodule
