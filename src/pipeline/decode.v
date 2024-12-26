@@ -119,7 +119,7 @@ always @(posedge clk or posedge reset) begin
         o_pipe_Imm      <= w_imm;
         o_pipe_Reg1Data <= w_Reg1Data;
         o_pipe_Reg2Data <= w_Reg2Data;
-        o_pipe_RegDst   <= w_RegDst;
+        o_pipe_RegDst   <= `_INST_RD_(i_pipe_Instruction);
 
         o_pipe_Alu1Src  <= w_Alu1Src;
         o_pipe_Alu2Src  <= w_Alu2Src;
