@@ -26,11 +26,11 @@ module imm_extend #(
     assign w_immU = `_INST_IMM_U_(i_Instr);
     assign w_immJ = `_INST_IMM_J_(i_Instr);
 
-    assign o_OutImm = (i_ExtOp == 3'b000) ? w_immI :
-                    (i_ExtOp == 3'b010) ? w_immS :
-                    (i_ExtOp == 3'b011) ? w_immB :
-                    (i_ExtOp == 3'b100) ? w_immU :
-                    (i_ExtOp == 3'b101) ? w_immJ :
+    assign o_OutImm = (i_ExtOp == `_EXT_I_) ? w_immI :
+                    (i_ExtOp == `_EXT_S_) ? w_immS :
+                    (i_ExtOp == `_EXT_B_) ? w_immB :
+                    (i_ExtOp == `_EXT_U_) ? w_immU :
+                    (i_ExtOp == `_EXT_J_) ? w_immJ :
                     32'b0;
 
 endmodule
