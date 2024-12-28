@@ -1,0 +1,51 @@
+# gitignore file
+# Below is the tree of the project
+# .
+# ├── docs
+# │   ├── Requirements.md
+# │   ├── Specification.md
+# │   ├── ...
+# ├── scripts
+# │   ├── assembler.py
+# │   └── compiler.py
+# ├── src
+# │   ├── common
+# │   │   ├── adder.v
+# │   │   ├── alu.v
+# │   │   ├── imm_extend.v
+# │   │   └── reg_file.v
+# │   ├── controller
+# │   │   └── controller.v
+# │   ├── cpu_top.v
+# │   ├── include
+# │   │   └── light_rv32i_defs.vh
+# │   ├── memory
+# │   │   ├── data_mem.v
+# │   │   └── inst_mem.v
+# │   └── pipeline
+# │       ├── access_mem.v
+# │       ├── decode.v
+# │       ├── execute.v
+# │       ├── fetch.v
+# │       └── writeback.v
+# ├── Makefile
+# ├── Readme.md
+# └── test
+#     ├── testbench
+#     │   ├── alu_tb.v
+#     │   └── simple_cpu_tb.v
+#     └── testcase
+#         └── simple.asm
+# The file or directory that doesn't find in the tree will be added to the gitignore file
+
+
+# File for compiled object files
+*.o
+*.vcd
+*.vvp
+
+# File for working directory
+work/
+
+# Named files
+simple_cpu_tb
