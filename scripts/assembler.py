@@ -166,8 +166,13 @@ def main():
             continue
         mc = compile_line(line)
         if mc:
-            # 输出二进制和十六进制
-            print(f"BIN: {mc} | HEX: {int(mc, 2):08X}")
+            # 将二进制字符串转换为整数
+            machine_int = int(mc, 2)
+            # 转换为4个字节的小端序
+            machine_bytes = machine_int.to_bytes(4, byteorder='little')
+            # 逐字节以16进制格式输出，每个字节占一行
+            for b in machine_bytes:
+                print(f"{b:02X}")
         else:
             print(f"无法编译: {line.strip()}")
 
