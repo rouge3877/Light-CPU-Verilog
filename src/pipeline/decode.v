@@ -4,8 +4,6 @@ module decode(
     input clk,
     input reset,
 
-    input i_pipe_stall,
-
     input wire i_RegWrEn,   // 假设用于指示写回使能
     input wire [4:0] i_RegDst, // 用于写回目的寄存器
     input wire [31:0] i_RegWrData, // 用于写回数据
@@ -114,7 +112,7 @@ always @(posedge clk or posedge reset) begin
         o_pipe_MemWrEn  <= 1'b0;
         o_pipe_Branch   <= 1'b0;
         o_pipe_Jump     <= 1'b0;
-    end else if (!i_pipe_stall) begin
+    end else begin
         o_pipe_PC       <= i_pipe_PC;
         o_pipe_Imm      <= w_imm;
         o_pipe_Reg1Data <= w_Reg1Data;

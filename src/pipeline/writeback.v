@@ -4,8 +4,6 @@ module writeback(
     input  clk,
     input  reset,
 
-    input i_pipe_stall,
-
     output wire [4:0] o_RegDst,
     output wire [31:0] o_RegWrData,
     output wire     o_RegWrEn,

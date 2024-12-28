@@ -6,8 +6,6 @@
 module fetch(
     input clk,
     input reset,
-
-    input i_pipe_stall,
     
     input wire i_ctr_mux_sel,
     input wire [31:0] i_PC,
@@ -35,14 +33,10 @@ module fetch(
         if (reset) begin
             r_PC <= 0;
         end else begin
-            if (i_pipe_stall) begin
-                r_PC <= r_PC;
+            if (i_ctr_mux_sel) begin
+                r_PC <= i_PC;
             end else begin
-                if (i_ctr_mux_sel) begin
-                    r_PC <= i_PC;
-                end else begin
-                    r_PC <= r_PC + 4;
-                end
+                r_PC <= r_PC + 4;
             end
         end
     end

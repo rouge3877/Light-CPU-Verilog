@@ -7,13 +7,11 @@ module cpu_top(
 
     // Wires between pipeline stages
     // Fetch -> Decode
-    wire        w_fetch_stall = 1'b0; // Example stall signal (tied to 0 here)
     wire        w_fetch_ctl_mux_sel;
     wire [31:0] w_fetch_PC;
     wire [31:0] w_fetch_Instruction;
 
     // Decode -> Execute
-    wire        w_decode_stall = 1'b0;
     wire [31:0] w_decode_Imm;
     wire [31:0] w_decode_Reg1Data;
     wire [31:0] w_decode_Reg2Data;
@@ -59,7 +57,6 @@ module cpu_top(
     fetch u_fetch (
         .clk             (clk),
         .reset           (reset),
-        .i_pipe_stall    (w_fetch_stall),
         .i_ctr_mux_sel   (w_mem_ctl_NextPC),       // Branch/Jump decision from Mem stage
         .i_PC            (w_execute_TargetAddr),   // Target address from Execute
         .o_pipe_PC       (w_fetch_PC),
@@ -72,7 +69,6 @@ module cpu_top(
     decode u_decode (
         .clk             (clk),
         .reset           (reset),
-        .i_pipe_stall    (w_decode_stall),
         // Writeback signals for register file
         .i_RegWrEn       (w_wb_RegWrEn),
         .i_RegDst        (w_wb_RegDst),
@@ -106,7 +102,6 @@ module cpu_top(
     execute u_execute (
         .clk             (clk),
         .reset           (reset),
-        .i_pipe_stall    (1'b0),
 
         // Input from Decode
         .i_pipe_PC       (w_decode_PC),
@@ -172,7 +167,6 @@ module cpu_top(
     writeback u_writeback (
         .clk             (clk),
         .reset           (reset),
-        .i_pipe_stall    (1'b0),
 
         // Signals passed along memory stage
         .i_pipe_MemData  (w_mem_MemData),

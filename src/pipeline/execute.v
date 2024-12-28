@@ -4,8 +4,6 @@ module execute(
     input  clk,
     input  reset,
     
-    input i_pipe_stall,
-
     // input [3:0] i_ctr_AluCtr,
     // input       i_ctr_Alu1Src,
     // input [1:0] i_ctr_Alu2Src,
