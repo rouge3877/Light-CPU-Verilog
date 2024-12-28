@@ -47,27 +47,16 @@ module fetch(
         end
     end
 
-    // o_pipe_PC
+    // o_pipe_PC and o_pipe_Instruction
     always @(posedge clk or posedge reset) begin
         if (reset) begin
             o_pipe_PC <= 0;
-        end else begin
-            o_pipe_PC <= r_PC;
-        end
-    end
-
-    // o_pipe_Instruction
-    always @(posedge clk or posedge reset) begin
-        if (reset) begin
             o_pipe_Instruction <= 0;
         end else begin
+            o_pipe_PC <= r_PC;
             o_pipe_Instruction <= w_Instruction;
         end
     end
 
+
 endmodule
-
-
-
-
-
