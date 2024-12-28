@@ -25,7 +25,7 @@ module simple_cpu_tb();
 
     // finish after 200 cycles
     initial begin
-        #100 $finish;
+        #1000 $finish;
     end
 
 
@@ -37,15 +37,17 @@ module simple_cpu_tb();
     // print reg file each cycle
     integer i;
     always @(posedge clk) begin
-        $display("------------------------Cycle %0d------------------------", $time);
-        
-        $display("PC = %0d", uut.u_fetch.o_pipe_PC);
-        $display("Instruction = %0h", uut.u_fetch.o_pipe_Instruction);
-        for(i = 0; i < 5; i = i + 1) begin
-            $display("reg[%0d] = %0d", i, uut.u_decode.u_reg_file.reg_array[i]);
+        $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Cycle %0d~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", $time);
+        $display("PC = %0x | Instruction = %0h", uut.u_fetch.o_pipe_PC, uut.u_fetch.o_pipe_Instruction);
+        // print reg file as a table to make it easier to read
+        $display("───────────────────────────────────────────────────────────────────────────────────────────────");
+        for (i = 0; i < 32; i = i + 4) begin
+            $display("│ reg[%2d] = %8x \t │ reg[%2d] = %8x \t │ reg[%2d] = %8x \t │ reg[%2d] = %8x │",
+                 i, uut.u_decode.u_reg_file.reg_array[i], i+1, uut.u_decode.u_reg_file.reg_array[i+1], 
+                 i+2, uut.u_decode.u_reg_file.reg_array[i+2], i+3, uut.u_decode.u_reg_file.reg_array[i+3]);
         end
-
-        $display("--------------------------------------------------------");
+        $display("───────────────────────────────────────────────────────────────────────────────────────────────");
+        $display("\n");
     end
 
 endmodule
