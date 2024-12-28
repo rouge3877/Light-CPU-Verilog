@@ -4,6 +4,7 @@ module inst_mem #(
     parameter MEM_INIT_FILE     = "inst_mem_init.hex",
     parameter MEM_ADDR_WIDTH    = `_MEM_ADDR_WIDTH_,
     parameter INST_WIDTH        = `_INST_WIDTH_,
+    parameter INST_MEM_WIDTH        = `_INST_WIDTH_ >> 2,
     parameter INST_MEM_SIZE     = `_INST_MEM_SIZE_
 ) (
     input wire clk,
@@ -13,7 +14,7 @@ module inst_mem #(
 );
 
     // 定义指令存储器
-    reg [INST_WIDTH-1:0] mem [0:INST_MEM_SIZE-1];
+    reg [INST_MEM_WIDTH-1:0] mem [0:INST_MEM_SIZE-1];
     
     integer i;
 
@@ -28,8 +29,13 @@ module inst_mem #(
         if (reset) begin
             $readmemh(MEM_INIT_FILE, mem);    
         end else begin
-            o_Data <= mem[i_Addr];
+            // mem is byte addressed, endianness is little
+            // o_Data = {mem[i_Addr+3], mem[i_Addr+2], mem[i_Addr+1], mem[i_Addr+0]};
         end
     end
+    always @(*) begin
+        o_Data = {mem[i_Addr+3], mem[i_Addr+2], mem[i_Addr+1], mem[i_Addr+0]};
+    end
+
 
 endmodule
