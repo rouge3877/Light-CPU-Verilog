@@ -121,6 +121,12 @@
 `define _ALU_SRCB_FOUR_ 2'b10
 
 
+// ALU src forward
+`define _ALU_SRCB_SRCREG_ 2'b00
+`define _ALU_SRCB_WBDATA_  2'b01
+`define _ALU_SRCB_EXMDATA_ 2'b10
+
+
 
 //------------------------------------------------------
 // 6) Extention 定义

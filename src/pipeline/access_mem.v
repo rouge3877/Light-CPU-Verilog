@@ -6,6 +6,10 @@ module access_mem(
 
     output wire o_ctl_NextPC,
 
+    // --- forwarding ---
+    input wire        i_forward_Slct,
+    input wire [31:0] i_forward_Data,
+
     // --- pipeline ---
     // former result
     input wire [31:0] i_pipe_TargetAddr,
@@ -37,6 +41,7 @@ module access_mem(
 
     // Instantiate data memory
     wire [31:0] w_MemData;
+    wire [31:0] w_DataIn;
 
     data_mem #(
         .MEM_INIT_FILE("data_mem_init.hex")
@@ -44,10 +49,12 @@ module access_mem(
         .clk(clk),
         .reset(reset),
         .i_Addr(i_pipe_AluResult),
-        .i_DataIn(i_pipe_Reg2Data),
+        .i_DataIn(w_DataIn),
         .i_WrEn(i_pipe_MemWrEn),
         .o_DataOut(w_MemData)
     );
+
+    assign w_DataIn = i_forward_Slct ? i_forward_Data : i_pipe_Reg2Data; //Data forwading, == 1: forwading
 
     // Beq: Write PC logic
     assign o_ctl_NextPC = i_pipe_Jump || (i_pipe_Branch && i_pipe_Zero);

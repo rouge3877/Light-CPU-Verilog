@@ -23,6 +23,9 @@ module decode(
     output reg [4:0]  o_pipe_RegDst,
     output reg [31:0] o_pipe_PC,
 
+    output reg [4:0]  o_pipe_Reg1,
+    output reg [4:0]  o_pipe_Reg2,
+
     // control signals
     output reg       o_pipe_Alu1Src,
     output reg [1:0] o_pipe_Alu2Src,
@@ -104,6 +107,9 @@ always @(posedge clk or posedge reset) begin
         o_pipe_Reg2Data <= 32'b0;
         o_pipe_RegDst   <= 5'b0;
 
+        o_pipe_Reg1     <= 5'b0;
+        o_pipe_Reg2     <= 5'b0;
+
         o_pipe_Alu1Src  <= 1'b0;
         o_pipe_Alu2Src  <= 2'b0;
         o_pipe_AluCtr   <= 4'b0;
@@ -118,6 +124,9 @@ always @(posedge clk or posedge reset) begin
         o_pipe_Reg1Data <= w_Reg1Data;
         o_pipe_Reg2Data <= w_Reg2Data;
         o_pipe_RegDst   <= `_INST_RD_(i_pipe_Instruction);
+
+        o_pipe_Reg1     <= w_Reg1;
+        o_pipe_Reg2     <= w_Reg2;
 
         o_pipe_Alu1Src  <= w_Alu1Src;
         o_pipe_Alu2Src  <= w_Alu2Src;

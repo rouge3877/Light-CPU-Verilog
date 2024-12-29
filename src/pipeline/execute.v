@@ -4,16 +4,21 @@ module execute(
     input  clk,
     input  reset,
     
-    // input [3:0] i_ctr_AluCtr,
-    // input       i_ctr_Alu1Src,
-    // input [1:0] i_ctr_Alu2Src,
+    // --- forwarding ---
+    input wire [1:0]  i_forward_SlctA,
+    input wire [1:0]  i_forward_SlctB,
+    input wire [31:0] i_forward_WBData,
+    input wire [31:0] i_forward_EXMData,
 
+
+    // --- pipeline ---
     // former result
     input wire [31:0] i_pipe_PC,
     input wire [31:0] i_pipe_Imm,
     input wire [31:0] i_pipe_Reg1Data,
     input wire [31:0] i_pipe_Reg2Data,
     input wire [4:0]  i_pipe_RegDst,
+    input wire [4:0]  i_pipe_Reg2,
     input wire        i_pipe_Alu1Src,
     input wire [1:0]  i_pipe_Alu2Src,
     input wire [3:0]  i_pipe_AluCtr,
@@ -33,6 +38,7 @@ module execute(
     // pass through
     output reg [31:0] o_pipe_Reg2Data,
     output reg [4:0]  o_pipe_RegDst,
+    output reg [4:0]  o_pipe_Reg2,
 
     // control signals
     output reg       o_pipe_MemToReg,
@@ -43,10 +49,12 @@ module execute(
 
 );
 
-    // Instantiate alu
+    // 1. Instantiate alu
     wire [31:0] w_AluInA, w_AluInB, w_AluResult;
     wire [3:0] w_AluCtr;
     wire w_AluCf;
+
+    wire [31:0] w_BusA, w_BusB;
 
     alu u_alu (
         .i_a      (w_AluInA),
@@ -58,12 +66,24 @@ module execute(
         .o_of     (),
         .o_sf     ()
     );
+
+    assign w_BusA = i_forward_SlctA == `_ALU_SRCB_SRCREG_ ? i_pipe_Reg1Data :
+                    i_forward_SlctA == `_ALU_SRCB_WBDATA_ ? i_forward_WBData :
+                    i_forward_SlctA == `_ALU_SRCB_EXMDATA_ ? i_forward_EXMData :
+                     i_pipe_Reg1Data;
+    
+    assign w_BusB = i_forward_SlctB == `_ALU_SRCB_SRCREG_ ? i_pipe_Reg2Data :
+                    i_forward_SlctB == `_ALU_SRCB_WBDATA_ ? i_forward_WBData :
+                    i_forward_SlctB == `_ALU_SRCB_EXMDATA_ ? i_forward_EXMData :
+                     i_pipe_Reg2Data;
+
+
     // alu input A mux:
-    assign w_AluInA = i_pipe_Alu1Src ? i_pipe_PC : i_pipe_Reg1Data;
+    assign w_AluInA = i_pipe_Alu1Src ? i_pipe_PC : w_BusA;
 
     // alu input B mux:
     assign w_AluInB = i_pipe_Alu2Src == `_ALU_SRCB_IMM_ ? i_pipe_Imm :
-                     i_pipe_Alu2Src == `_ALU_SRCB_REG2_ ? i_pipe_Reg2Data :
+                     i_pipe_Alu2Src == `_ALU_SRCB_REG2_ ? w_BusB :
                      i_pipe_Alu2Src == `_ALU_SRCB_FOUR_ ? 32'h00000004 :
                      32'h00000000;
 
@@ -71,7 +91,7 @@ module execute(
     assign w_AluCtr = i_pipe_AluCtr;
 
 
-    // Instantiate adder
+    // 2. Instantiate adder
     wire [31:0] w_AdderResult, w_AdderInA, w_AdderInB;
 
     adder u_adder (
@@ -95,6 +115,7 @@ module execute(
 
             o_pipe_Reg2Data <= 0;
             o_pipe_RegDst <= 0;
+            o_pipe_Reg2 <= 0;
             o_pipe_MemToReg <= 0;
             o_pipe_RegWrEn <= 0;
             o_pipe_MemWrEn <= 0;
@@ -107,6 +128,7 @@ module execute(
 
             o_pipe_Reg2Data <= i_pipe_Reg2Data;
             o_pipe_RegDst <= i_pipe_RegDst;
+            o_pipe_Reg2 <= i_pipe_Reg2;
             o_pipe_MemToReg <= i_pipe_MemToReg;
             o_pipe_RegWrEn <= i_pipe_RegWrEn;
             o_pipe_MemWrEn <= i_pipe_MemWrEn;
