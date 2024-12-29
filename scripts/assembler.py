@@ -162,19 +162,46 @@ def compile_line(line):
 
 def main():
     for line in sys.stdin:
-        if not line.strip():
+        stripped_line = line.strip()
+        if not stripped_line:
             continue
-        mc = compile_line(line)
+        parts = stripped_line.replace(',', ' ').split()
+        if not parts:
+            continue
+        instr = parts[0].upper()
+        mc = compile_line(stripped_line)
         if mc:
-            # 将二进制字符串转换为整数
-            machine_int = int(mc, 2)
-            # 转换为4个字节的小端序
-            machine_bytes = machine_int.to_bytes(4, byteorder='little')
-            # 逐字节以16进制格式输出，每个字节占一行
-            for b in machine_bytes:
-                print(f"{b:02X}")
+            try:
+                # 将二进制字符串转换为整数
+                machine_int = int(mc, 2)
+                # 转换为4个字节的小端序
+                machine_bytes = machine_int.to_bytes(4, byteorder='little')
+                # 逐字节以16进制格式输出，每个字节占一行
+                for b in machine_bytes:
+                    print(f"{b:02X}")
+            except Exception as e:
+                print(f"错误处理指令 '{stripped_line}': {e}")
+                continue
+
+            # 检查是否需要添加三个 ADD x0, x0, x0
+            if instr in ["BEQ", "JAL"]:
+                add_instruction = "ADD x0, x0, x0"
+                for _ in range(3):
+                    mc_add = compile_line(add_instruction)
+                    if mc_add:
+                        try:
+                            machine_int_add = int(mc_add, 2)
+                            machine_bytes_add = machine_int_add.to_bytes(4, byteorder='little')
+                            for b in machine_bytes_add:
+                                print(f"{b:02X}")
+                        except Exception as e:
+                            print(f"错误处理指令 '{add_instruction}': {e}")
+                            break
+                    else:
+                        print(f"无法编译: {add_instruction}")
+                        break
         else:
-            print(f"无法编译: {line.strip()}")
+            print(f"无法编译: {stripped_line}")
 
 if __name__ == "__main__":
     main()
