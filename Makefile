@@ -22,5 +22,12 @@ simple_cpu: $(SRC) test/testbench/simple_cpu_tb.v
 	$(VVP) simple_cpu_tb
 	$(WAVE) simple_cpu_tb.vcd &
 
+%:
+	@echo "Running test $@..."
+	cat test/testcase/$@.asm | ./scripts/assembler.py > inst_mem_init.hex
+	$(IVERILOG) $(IVERILOG_FLAGS) $(SRC) test/testbench/simple_cpu_tb.v -o simple_cpu_tb -s simple_cpu_tb
+	$(VVP) simple_cpu_tb
+	$(WAVE) simple_cpu_tb.vcd &
+
 clean:
 	rm -f alu alu_tb simple_cpu_tb simple_cpu_tb.vcd
