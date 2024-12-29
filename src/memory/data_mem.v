@@ -33,9 +33,6 @@ module data_mem #(
         else if (i_WrEn) begin
             r_mem[i_Addr] <= i_DataIn;
         end
-
-        // print data memory
-        $display("Data memory[%d] = %h", i_Addr, r_mem[i_Addr]);    
     end
 
 endmodule
