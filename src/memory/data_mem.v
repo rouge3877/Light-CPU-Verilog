@@ -25,7 +25,7 @@ module data_mem #(
 
     // 写逻辑：时序逻辑
     always @(posedge clk or posedge reset) begin
-        if (reset) begin
+        if (rese t) begin
             for (i = 0; i < DATA_MEM_SIZE; i = i + 1) begin
                 r_mem[i] <= {DATA_WIDTH{1'b0}};
             end
