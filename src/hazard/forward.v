@@ -11,7 +11,7 @@ module forward(
     input wire        i_forward_EXM_MemWrEn,
 
     input wire [4:0]  i_forward_MWB_RegDst,
-    input wire        i_forward_MWB_MemWrEn,
+    input wire        i_forward_MWB_RegWrEn,
 
     output wire [1:0] o_forward_SlctA,
     output wire [1:0] o_forward_SlctB,
@@ -26,19 +26,19 @@ module forward(
     assign o_forward_SlctA = 
         {(i_forward_EXM_RegWrEn && (i_forward_EXM_RegDst == i_forward_IDEX_Reg1) 
                                 && (i_forward_EXM_RegDst != 0)), 
-         (i_forward_MWB_MemWrEn && (i_forward_MWB_RegDst == i_forward_IDEX_Reg1) 
+         (i_forward_MWB_RegWrEn && (i_forward_MWB_RegDst == i_forward_IDEX_Reg1) 
                                 && (i_forward_MWB_RegDst != 0)
                                 && (i_forward_EXM_RegDst != i_forward_IDEX_Reg1))};
 
     assign o_forward_SlctB = 
         {(i_forward_EXM_RegWrEn && (i_forward_EXM_RegDst == i_forward_IDEX_Reg2) 
                                 && (i_forward_EXM_RegDst != 0)), 
-         (i_forward_MWB_MemWrEn && (i_forward_MWB_RegDst == i_forward_IDEX_Reg2) 
+         (i_forward_MWB_RegWrEn && (i_forward_MWB_RegDst == i_forward_IDEX_Reg2) 
                                 && (i_forward_MWB_RegDst != 0)
                                 && (i_forward_EXM_RegDst != i_forward_IDEX_Reg2))};
 
     assign o_forward_SlctWBData = 
-        i_forward_MWB_MemWrEn && (i_forward_MWB_RegDst == i_forward_IDEX_Reg2) 
+        i_forward_MWB_RegWrEn && (i_forward_MWB_RegDst == i_forward_EXM_Reg2) 
                               && i_forward_EXM_MemWrEn
                               && (i_forward_MWB_RegDst != 0);
 
