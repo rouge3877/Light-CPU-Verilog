@@ -25,7 +25,7 @@ module simple_cpu_tb();
 
     // finish after 200 cycles
     initial begin
-        #1000 $finish;
+        #500 $finish;
     end
 
 

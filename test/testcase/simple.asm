@@ -1,14 +1,15 @@
 lui x1, 74565
+addi x11, x0, 8
 add x0, x0, x0
 add x0, x0, x0
 add x0, x0, x0
 add x0, x0, x0
-sw x1, 0(x0)
+sw x1, 0(x11)
 add x0, x0, x0
 add x0, x0, x0
 add x0, x0, x0
 add x0, x0, x0
-lw x2, 0(x0)
+lw x2, 0(x11)
 add x0, x0, x0
 add x0, x0, x0
 add x0, x0, x0
