@@ -9,6 +9,12 @@ module fetch(
     
     input wire i_ctr_mux_sel,
     input wire [31:0] i_PC,
+
+    input wire i_ctr_HoldPC,
+    input wire i_ctr_HoldIFIDReg,
+
+    output reg [4:0] o_pipe_Reg1,
+    output reg [4:0] o_pipe_Reg2,
     
     output reg [31:0] o_pipe_PC,
     output reg [31:0] o_pipe_Instruction
@@ -33,6 +39,9 @@ module fetch(
         if (reset) begin
             r_PC <= 0;
         end else begin
+            if (i_ctr_HoldPC) begin
+                r_PC <= r_PC;
+            end else
             if (i_ctr_mux_sel) begin
                 r_PC <= i_PC;
             end else begin
@@ -44,9 +53,18 @@ module fetch(
     // o_pipe_PC and o_pipe_Instruction
     always @(posedge clk or posedge reset) begin
         if (reset) begin
+            o_pipe_Reg1 <= 0;
+            o_pipe_Reg2 <= 0;
             o_pipe_PC <= 0;
             o_pipe_Instruction <= 0;
+        end else if (i_ctr_HoldIFIDReg) begin
+            o_pipe_Reg1 <= o_pipe_Reg1;
+            o_pipe_Reg2 <= o_pipe_Reg2;
+            o_pipe_PC <= o_pipe_PC;
+            o_pipe_Instruction <= o_pipe_Instruction;
         end else begin
+            o_pipe_Reg1 <= `_INST_RS1_(w_Instruction);
+            o_pipe_Reg2 <= `_INST_RS2_(w_Instruction);
             o_pipe_PC <= r_PC;
             o_pipe_Instruction <= w_Instruction;
         end

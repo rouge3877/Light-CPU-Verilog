@@ -7,10 +7,14 @@ module decode(
     input wire i_RegWrEn,   // 假设用于指示写回使能
     input wire [4:0] i_RegDst, // 用于写回目的寄存器
     input wire [31:0] i_RegWrData, // 用于写回数据
+
+    input wire i_ctr_SetCtlZero, // 用于指示是否清空控制器
     
 
     // --- pipeline ---
     // former result
+    input wire [4:0] i_pipe_Reg1,
+    input wire [4:0] i_pipe_Reg2,
     input wire [31:0] i_pipe_PC,
     input wire [31:0] i_pipe_Instruction,
 
@@ -27,6 +31,7 @@ module decode(
     output reg [4:0]  o_pipe_Reg2,
 
     // control signals
+    output reg       o_pipe_MemRead,
     output reg       o_pipe_Alu1Src,
     output reg [1:0] o_pipe_Alu2Src,
     output reg [3:0] o_pipe_AluCtr,
@@ -110,6 +115,8 @@ always @(posedge clk or posedge reset) begin
         o_pipe_Reg1     <= 5'b0;
         o_pipe_Reg2     <= 5'b0;
 
+        o_pipe_MemRead  <= 1'b0;
+
         o_pipe_Alu1Src  <= 1'b0;
         o_pipe_Alu2Src  <= 2'b0;
         o_pipe_AluCtr   <= 4'b0;
@@ -128,14 +135,28 @@ always @(posedge clk or posedge reset) begin
         o_pipe_Reg1     <= w_Reg1;
         o_pipe_Reg2     <= w_Reg2;
 
-        o_pipe_Alu1Src  <= w_Alu1Src;
-        o_pipe_Alu2Src  <= w_Alu2Src;
-        o_pipe_AluCtr   <= w_AluCtr;
-        o_pipe_MemToReg <= w_MemToReg;
-        o_pipe_RegWrEn  <= w_RegWrEn;
-        o_pipe_MemWrEn  <= w_MemWrEn;
-        o_pipe_Branch   <= w_Branch;
-        o_pipe_Jump     <= w_Jump;
+        // o_pipe_MemRead  = 1 if its a load instruction
+        o_pipe_MemRead  <= (`_INST_OPCODE_(i_pipe_Instruction) == `_OPCODE_LW_);
+
+        if (i_ctr_SetCtlZero) begin
+            o_pipe_Alu1Src  <= 1'b0;
+            o_pipe_Alu2Src  <= 2'b00;
+            o_pipe_AluCtr   <= 4'b0000;
+            o_pipe_MemToReg <= 1'b0;
+            o_pipe_RegWrEn  <= 1'b0;
+            o_pipe_MemWrEn  <= 1'b0;
+            o_pipe_Branch   <= 1'b0;
+            o_pipe_Jump     <= 1'b0;
+        end else begin
+            o_pipe_Alu1Src  <= w_Alu1Src;
+            o_pipe_Alu2Src  <= w_Alu2Src;
+            o_pipe_AluCtr   <= w_AluCtr;
+            o_pipe_MemToReg <= w_MemToReg;
+            o_pipe_RegWrEn  <= w_RegWrEn;
+            o_pipe_MemWrEn  <= w_MemWrEn;
+            o_pipe_Branch   <= w_Branch;
+            o_pipe_Jump     <= w_Jump;
+        end
 
     end
 end

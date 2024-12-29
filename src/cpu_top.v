@@ -10,8 +10,11 @@ module cpu_top(
     wire        w_fetch_ctl_mux_sel;
     wire [31:0] w_fetch_PC;
     wire [31:0] w_fetch_Instruction;
+    wire [4:0]  w_fetch_Reg1;
+    wire [4:0]  w_fetch_Reg2;
 
     // Decode -> Execute
+    wire        w_decode_MemRead;
     wire [31:0] w_decode_Imm;
     wire [31:0] w_decode_Reg1Data;
     wire [31:0] w_decode_Reg2Data;
@@ -74,12 +77,24 @@ module cpu_top(
         .i_forward_EXM_MemWrEn(w_execute_MemWrEn),
 
         .i_forward_MWB_RegDst(w_mem_RegDst),
-        .i_forward_MWB_MemWrEn(w_mem_RegWrEn),
+        .i_forward_MWB_RegWrEn(w_mem_RegWrEn),
 
         .o_forward_SlctA(w_forward_SlctA),
         .o_forward_SlctB(w_forward_SlctB),
         .o_forward_SlctWBData(w_forward_SlctWBData)
-);
+    );
+
+    wire load_use_hazard;
+    wire set_ctl_mux_sel;
+    wire hold_IFID_reg;
+    wire hold_PC_reg;
+    assign load_use_hazard = ((w_decode_RegDst == w_fetch_Reg1) || (w_decode_RegDst == w_fetch_Reg2))
+                            && w_decode_MemRead;
+    assign set_ctl_mux_sel = load_use_hazard;
+    assign hold_IFID_reg = load_use_hazard;
+    assign hold_PC_reg = load_use_hazard;
+
+    
 
 
     // =========================================================================
@@ -90,6 +105,12 @@ module cpu_top(
         .reset           (reset),
         .i_ctr_mux_sel   (w_mem_ctl_NextPC),       // Branch/Jump decision from Mem stage
         .i_PC            (w_execute_TargetAddr),   // Target address from Execute
+
+        .i_ctr_HoldPC    (hold_PC_reg),
+        .i_ctr_HoldIFIDReg (hold_IFID_reg),
+
+        .o_pipe_Reg1     (w_fetch_Reg1),
+        .o_pipe_Reg2     (w_fetch_Reg2),
         .o_pipe_PC       (w_fetch_PC),
         .o_pipe_Instruction(w_fetch_Instruction)
     );
@@ -105,9 +126,14 @@ module cpu_top(
         .i_RegDst        (w_wb_RegDst),
         .i_RegWrData     (w_wb_RegWrData),
 
+        // Load-use hazard signals
+        .i_ctr_SetCtlZero(set_ctl_mux_sel),
+
         // Input from Fetch
         .i_pipe_PC       (w_fetch_PC),
         .i_pipe_Instruction(w_fetch_Instruction),
+        .i_pipe_Reg1     (w_fetch_Reg1),
+        .i_pipe_Reg2     (w_fetch_Reg2),
 
         // Outputs for Execute
         .o_pipe_Imm      (w_decode_Imm),
@@ -119,6 +145,7 @@ module cpu_top(
         .o_pipe_Reg2     (w_decode_Reg2),
 
         // Control signals for Execute
+        .o_pipe_MemRead  (w_decode_MemRead),
         .o_pipe_Alu1Src  (w_decode_Alu1Src),
         .o_pipe_Alu2Src  (w_decode_Alu2Src),
         .o_pipe_AluCtr   (w_decode_AluCtr),
